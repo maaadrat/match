@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <style type="text/css">
+        .item {
+            width: 150px;
+            height: 150px;
+            background-size: 100%;
+            background-repeat: no-repeat;
+            margin-top: 20px;
+            margin-left: 20px;
+            transition: 0.5s;
+        }
+        .item:hover {
+            opacity: 0.7;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            height: 200px;
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        .timer {
+            width: 1500px;
+            height: 30px;
+            background: red;
+        }
+        .timer-main {
+            width: 1510px;
+            height: 40px;
+            background: gray;
+            padding-top: 10px;
+            padding-left: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .button {
+            width: 100px;
+            height: 40px;
+        }
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100px;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-main">
+        <div class="timer"></div>
+    </div>
+    <div class="center">
+        <button class="button">Начать</button>
+    </div>
+    <h1 id = "score" style="width: 150px;height: 40px;margin-left: auto;margin-right: auto;display: none;">Очки - <span class="score">0</span></h1>
+    <div class="row">
+    </div>
+    <script type="text/javascript">
+    //див-родитель
+    let args = [0,0,0]
+    let check = []
+    let time = 6000
+    let score = 0
+    let row = document.querySelector(".row");
+    let randomizer = function (arg) {
+        let rand = Math.random() * arg
+        return Math.round(rand)
+    }
+    let images = ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png"];
+    for (let i = 0; i < 12; i++){
+        let random = randomizer(11-i)
+        //let random = randomizer(images.length-1)
+        let box = document.createElement('div')
+        row.appendChild(box)
+        box.classList.add("item")
+        box.style.backgroundImage = 'url(' + images[random] + ')'
+        images.splice(random,1)
+    }    
+    let items = document.querySelectorAll('.item')
+    for (let i = 0; i < 12; i++){
+        items[i].onclick = function () {
+            if(check[i] == null){
+                items[i].style.opacity = 0.4
+                if (args[0] == 0) {
+                    args[0] = items[i].style.backgroundImage
+                    args[1] = i
+                }
+                if (args[0] != 0 & args[1] != i) {
+                    args[2] = items[i].style.backgroundImage
+                    if (args[0] == args[2]) {
+                        check[i] = i
+                        check[args[1]] = args[1]
+                        items[args[1]].style.opacity = 0
+                        items[i].style.opacity = 0
+                        alert("Правильно!")
+                        for (let i = 0; i < 3; i++) {
+                            args[i] = 0
+                        }
+                        score += 1
+                        document.querySelector('.score').innerHTML = score
+                    } else {
+                        alert("Неверно!")
+                        items[args[1]].style.opacity = 1
+                        items[i].style.opacity = 1
+                        for (let i = 0; i < 3; i++) {
+                            args[i] = 0
+                        }
+                    }
+                }
+            }
+        }
+    }   
+    document.querySelector('.button').onclick = function () {
+        let timer = function () {
+            time = time - 1
+            document.querySelector('.timer').style.width = time/4 + 'px'
+            if(time < 0) {
+                alert('Ты проиграл!')
+                row.style.display = 'none'
+                clearInterval(timeline)
+            }
+            if(time > 0 & score > 5) {
+                alert('Ты победил!')
+                row.style.display = 'none'
+                clearInterval(timeline)
+            }
+        }
+        row.style.display = 'flex'
+        document.getElementById('score').style.display = 'block'
+        document.querySelector('.button').style.opacity = 0
+        let timeline = setInterval(timer, 1)
+    }
+    </script>
+</body>
+</html>
